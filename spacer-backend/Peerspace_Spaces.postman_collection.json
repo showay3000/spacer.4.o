@@ -1,0 +1,553 @@
+{
+  "info": {
+    "_postman_id": "peerspace-spaces-collection",
+    "name": "Peerspace Full API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Comprehensive API collection for all backend endpoints, including authentication, spaces, bookings, users, and payments. Includes example data and documentation."
+  },
+  "item": [
+    {
+      "name": "Auth: Register",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"Password123!\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"role\": \"owner\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "register"]
+        },
+        "description": "Register a new user. Roles: client, owner, admin."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"message\": \"User registered successfully\",\n  \"user\": {\n    \"id\": 3,\n    \"email\": \"jane.doe@example.com\",\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Doe\",\n    \"role\": \"owner\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Auth: Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"jane.doe@example.com\",\n  \"password\": \"Password123!\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/auth/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "login"]
+        },
+        "description": "Login and receive access and refresh tokens."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"access_token\": \"...\",\n  \"refresh_token\": \"...\",\n  \"user\": {\n    \"id\": 3,\n    \"email\": \"jane.doe@example.com\",\n    \"first_name\": \"Jane\",\n    \"last_name\": \"Doe\",\n    \"role\": \"owner\"\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Auth: Refresh Token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{refresh_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/refresh",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "refresh"]
+        },
+        "description": "Refresh access token using a valid refresh token."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"access_token\": \"...\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Auth: Get Profile",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/auth/me",
+          "host": ["{{base_url}}"],
+          "path": ["api", "auth", "me"]
+        },
+        "description": "Get current user profile. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 3,\n  \"email\": \"jane.doe@example.com\",\n  \"first_name\": \"Jane\",\n  \"last_name\": \"Doe\",\n  \"role\": \"owner\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get All Spaces",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/spaces",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces"]
+        },
+        "description": "Fetch all spaces. Supports pagination and filtering."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "originalRequest": {},
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [],
+          "body": "{\n  \"spaces\": [\n    {\n      \"id\": 1,\n      \"name\": \"Bright Designer Villa with Ample Breakout Room\",\n      \"description\": \"A spacious villa perfect for team meetings, off-sites, and creative sessions. Features breakout rooms, a functional kitchen, and large windows.\",\n      \"address\": \"123 Main St\",\n      \"city\": \"San Francisco\",\n      \"price_per_hour\": 150,\n      \"capacity\": 30,\n      \"amenities\": [\"wifi\", \"kitchen\", \"projector\", \"whiteboard\"],\n      \"is_available\": true,\n      \"images\": [\"https://example.com/villa1.jpg\"]\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Space by ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/spaces/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces", "1"]
+        },
+        "description": "Fetch details for a specific space by ID."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "originalRequest": {},
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [],
+          "body": "{\n  \"id\": 1,\n  \"name\": \"Bright Designer Villa with Ample Breakout Room\",\n  \"description\": \"A spacious villa perfect for team meetings, off-sites, and creative sessions. Features breakout rooms, a functional kitchen, and large windows.\",\n  \"address\": \"123 Main St\",\n  \"city\": \"San Francisco\",\n  \"price_per_hour\": 150,\n  \"capacity\": 30,\n  \"amenities\": [\"wifi\", \"kitchen\", \"projector\", \"whiteboard\"],\n  \"is_available\": true,\n  \"images\": [\"https://example.com/villa1.jpg\"]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Create Space",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "name", "value": "Bright Designer Villa with Ample Breakout Room", "type": "text", "description": "Name of the space" },
+            { "key": "description", "value": "A spacious villa perfect for team meetings, off-sites, and creative sessions. Features breakout rooms, a functional kitchen, and large windows.", "type": "text", "description": "Description of the space" },
+            { "key": "address", "value": "123 Main St", "type": "text", "description": "Street address" },
+            { "key": "city", "value": "San Francisco", "type": "text", "description": "City" },
+            { "key": "price_per_hour", "value": "150", "type": "text", "description": "Hourly price" },
+            { "key": "capacity", "value": "30", "type": "text", "description": "Capacity of the space" },
+            { "key": "amenities", "value": "wifi,kitchen,projector,whiteboard", "type": "text", "description": "Comma-separated amenities" },
+            { "key": "is_available", "value": "true", "type": "text", "description": "Availability (true/false)" },
+            { "key": "images", "type": "file", "description": "Upload one or more images (optional)", "src": "" }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/spaces",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces"]
+        },
+        "description": "Create a new space. Requires admin or owner role. Use form-data for all fields. For amenities, use a comma-separated string. To upload images, add one or more files to the 'images' field."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 2,\n  \"name\": \"Bright Designer Villa with Ample Breakout Room\",\n  \"description\": \"A spacious villa perfect for team meetings, off-sites, and creative sessions. Features breakout rooms, a functional kitchen, and large windows.\",\n  \"address\": \"123 Main St\",\n  \"city\": \"San Francisco\",\n  \"price_per_hour\": 150,\n  \"capacity\": 30,\n  \"amenities\": [\"wifi\", \"kitchen\", \"projector\", \"whiteboard\"],\n  \"is_available\": true,\n  \"images\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "Update Space",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            { "key": "name", "value": "Updated Villa Name", "type": "text", "description": "Name of the space" },
+            { "key": "description", "value": "Updated description.", "type": "text", "description": "Description of the space" },
+            { "key": "address", "value": "456 New Address", "type": "text", "description": "Street address" },
+            { "key": "city", "value": "San Francisco", "type": "text", "description": "City" },
+            { "key": "price_per_hour", "value": "200", "type": "text", "description": "Hourly price" },
+            { "key": "capacity", "value": "40", "type": "text", "description": "Capacity of the space" },
+            { "key": "amenities", "value": "wifi,kitchen", "type": "text", "description": "Comma-separated amenities" },
+            { "key": "is_available", "value": "false", "type": "text", "description": "Availability (true/false)" },
+            { "key": "images", "type": "file", "description": "Upload one or more images (optional)", "src": "" }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/spaces/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces", "1"]
+        },
+        "description": "Update an existing space. Requires admin or owner role. Use form-data for all fields. For amenities, use a comma-separated string. To upload images, add one or more files to the 'images' field."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"name\": \"Updated Villa Name\",\n  \"description\": \"Updated description.\",\n  \"address\": \"456 New Address\",\n  \"city\": \"San Francisco\",\n  \"price_per_hour\": 200,\n  \"capacity\": 40,\n  \"amenities\": [\"wifi\", \"kitchen\"],\n  \"is_available\": false,\n  \"images\": []\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Space",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/spaces/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces", "1"]
+        },
+        "description": "Delete a space by ID. Requires admin or owner role."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "originalRequest": {},
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [],
+          "body": "{\n  \"message\": \"Space deleted successfully.\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Bookings: List All Bookings",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/bookings",
+          "host": ["{{base_url}}"],
+          "path": ["api", "bookings"]
+        },
+        "description": "List all bookings. Requires authentication. Supports pagination."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"bookings\": [\n    {\n      \"id\": 1,\n      \"space_id\": 1,\n      \"user_id\": 3,\n      \"start_time\": \"2025-06-01T09:00:00Z\",\n      \"end_time\": \"2025-06-01T17:00:00Z\",\n      \"total_price\": 1200,\n      \"purpose\": \"Team offsite\",\n      \"status\": \"pending\",\n      \"payment_status\": \"pending\",\n      \"created_at\": \"2025-05-01T10:00:00Z\",\n      \"updated_at\": \"2025-05-01T10:00:00Z\"\n    }\n  ],\n  \"total\": 1,\n  \"pages\": 1,\n  \"current_page\": 1\n}"
+        }
+      ]
+    },
+    {
+      "name": "Bookings: Get Booking by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/bookings/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "bookings", "1"]
+        },
+        "description": "Get details for a specific booking by ID. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"space_id\": 1,\n  \"user_id\": 3,\n  \"start_time\": \"2025-06-01T09:00:00Z\",\n  \"end_time\": \"2025-06-01T17:00:00Z\",\n  \"total_price\": 1200,\n  \"purpose\": \"Team offsite\",\n  \"status\": \"pending\",\n  \"payment_status\": \"pending\",\n  \"created_at\": \"2025-05-01T10:00:00Z\",\n  \"updated_at\": \"2025-05-01T10:00:00Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Bookings: Create Booking",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"space_id\": 1,\n  \"start_time\": \"2025-06-01T09:00:00Z\",\n  \"end_time\": \"2025-06-01T17:00:00Z\",\n  \"purpose\": \"Team offsite\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/bookings",
+          "host": ["{{base_url}}"],
+          "path": ["api", "bookings"]
+        },
+        "description": "Create a new booking. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 2,\n  \"space_id\": 1,\n  \"user_id\": 3,\n  \"start_time\": \"2025-06-01T09:00:00Z\",\n  \"end_time\": \"2025-06-01T17:00:00Z\",\n  \"total_price\": 1200,\n  \"purpose\": \"Team offsite\",\n  \"status\": \"pending\",\n  \"payment_status\": \"pending\",\n  \"created_at\": \"2025-05-01T10:00:00Z\",\n  \"updated_at\": \"2025-05-01T10:00:00Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Bookings: Cancel Booking",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/bookings/1/cancel",
+          "host": ["{{base_url}}"],
+          "path": ["api", "bookings", "1", "cancel"]
+        },
+        "description": "Cancel a booking by ID. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"status\": \"cancelled\",\n  \"payment_status\": \"refunded\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Bookings: Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"payment_method\": \"mpesa\",\n  \"transaction_id\": \"MPESA123456\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/bookings/1/payment",
+          "host": ["{{base_url}}"],
+          "path": ["api", "bookings", "1", "payment"]
+        },
+        "description": "Process payment for a booking. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "Created",
+          "code": 201,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"booking_id\": 1,\n  \"amount\": 1200,\n  \"payment_method\": \"mpesa\",\n  \"transaction_id\": \"MPESA123456\",\n  \"status\": \"completed\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Users: List All Users",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users"]
+        },
+        "description": "List all users (admin only). Supports pagination."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"users\": [\n    {\n      \"id\": 1,\n      \"email\": \"admin@example.com\",\n      \"first_name\": \"Admin\",\n      \"last_name\": \"User\",\n      \"role\": \"admin\"\n    }\n  ],\n  \"total\": 1,\n  \"pages\": 1,\n  \"current_page\": 1\n}"
+        }
+      ]
+    },
+    {
+      "name": "Users: Get User by ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Get user details by ID. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"email\": \"admin@example.com\",\n  \"first_name\": \"Admin\",\n  \"last_name\": \"User\",\n  \"role\": \"admin\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Users: Update User",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"first_name\": \"Updated\",\n  \"last_name\": \"User\",\n  \"email\": \"updated@example.com\",\n  \"role\": \"owner\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Update user details by ID. Requires authentication. Only admin can update role."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"email\": \"updated@example.com\",\n  \"first_name\": \"Updated\",\n  \"last_name\": \"User\",\n  \"role\": \"owner\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Users: Delete User",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "1"]
+        },
+        "description": "Delete a user by ID. Admin only. Cannot delete own account."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"message\": \"User deleted successfully\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Payments: M-Pesa Initiate",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{access_token}}", "type": "text" },
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"phone_number\": \"0712345678\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/payments/mpesa/initiate/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments", "mpesa", "initiate", "1"]
+        },
+        "description": "Initiate M-Pesa payment for a booking. Requires authentication."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"message\": \"Payment initiated successfully\",\n  \"checkout_request_id\": \"ws_CO_123456789\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Payments: M-Pesa Callback",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json", "type": "text" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"Body\": {\n    \"stkCallback\": {\n      \"MerchantRequestID\": \"29115-34620561-1\",\n      \"CheckoutRequestID\": \"ws_CO_123456789\",\n      \"ResultCode\": 0,\n      \"ResultDesc\": \"The service request is processed successfully.\",\n      \"CallbackMetadata\": {\n        \"Item\": [\n          {\n            \"Name\": \"Amount\",\n            \"Value\": 1200\n          },\n          {\n            \"Name\": \"MpesaReceiptNumber\",\n            \"Value\": \"NLJ7RT61SV\"\n          },\n          {\n            \"Name\": \"PhoneNumber\",\n            \"Value\": 254712345678\n          }\n        ]\n      }\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/payments/mpesa-callback",
+          "host": ["{{base_url}}"],
+          "path": ["api", "payments", "mpesa-callback"]
+        },
+        "description": "M-Pesa payment callback endpoint. Used by M-Pesa to notify payment status."
+      },
+      "response": [
+        {
+          "name": "Example Response",
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"message\": \"Callback processed successfully\"\n}"
+        }
+      ]
+    }
+  ],
+  "event": []
+} 

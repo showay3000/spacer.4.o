@@ -1,0 +1,229 @@
+{
+  "info": {
+    "name": "Spaces API Collection",
+    "_postman_id": "12345678-abcd-efgh-ijkl-1234567890ab",
+    "description": "Postman collection for all Spaces API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Spaces List",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/spaces",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces"],
+          "query": [
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Page number (optional)"
+            },
+            {
+              "key": "per_page",
+              "value": "10",
+              "description": "Results per page (optional)"
+            },
+            {
+              "key": "status",
+              "value": "available",
+              "description": "Filter by status: available, booked, or empty for all (optional)"
+            },
+            {
+              "key": "city",
+              "value": "",
+              "description": "Filter by city (optional)"
+            },
+            {
+              "key": "min_price",
+              "value": "",
+              "description": "Minimum price filter (optional)"
+            },
+            {
+              "key": "max_price",
+              "value": "",
+              "description": "Maximum price filter (optional)"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Space Details",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/spaces/:space_id",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces", ":space_id"],
+          "variable": [
+            {
+              "key": "space_id",
+              "description": "ID of the space to retrieve",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Space",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Cozy Office Space",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "A comfortable and quiet office space in downtown.",
+              "type": "text"
+            },
+            {
+              "key": "address",
+              "value": "123 Main St, Cityville",
+              "type": "text"
+            },
+            {
+              "key": "city",
+              "value": "Cityville",
+              "type": "text"
+            },
+            {
+              "key": "price_per_hour",
+              "value": "25.0",
+              "type": "text"
+            },
+            {
+              "key": "capacity",
+              "value": "10",
+              "type": "text"
+            },
+            {
+              "key": "amenities",
+              "value": "WiFi,Projector,Whiteboard",
+              "type": "text"
+            },
+            {
+              "key": "images",
+              "type": "file",
+              "src": ""
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/spaces",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Space",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "name",
+              "value": "Updated Space Name",
+              "type": "text"
+            },
+            {
+              "key": "description",
+              "value": "Updated description",
+              "type": "text"
+            },
+            {
+              "key": "address",
+              "value": "Updated address",
+              "type": "text"
+            },
+            {
+              "key": "city",
+              "value": "Updated city",
+              "type": "text"
+            },
+            {
+              "key": "price_per_hour",
+              "value": "30.0",
+              "type": "text"
+            },
+            {
+              "key": "capacity",
+              "value": "15",
+              "type": "text"
+            },
+            {
+              "key": "images",
+              "type": "file",
+              "src": ""
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/api/spaces/:space_id",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces", ":space_id"],
+          "variable": [
+            {
+              "key": "space_id",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Space",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/spaces/:space_id",
+          "host": ["{{base_url}}"],
+          "path": ["api", "spaces", ":space_id"],
+          "variable": [
+            {
+              "key": "space_id",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}

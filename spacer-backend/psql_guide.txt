@@ -1,0 +1,267 @@
+SPACER BACKEND - PostgreSQL Commands Guide
+==========================================
+
+1. DATABASE CONNECTION
+---------------------
+There are several ways to connect to the Render hosted database:
+
+Method 1: Using full connection URL
+---------------------------------
+psql "postgres://spacer_new_user:YzVj3MZNm6FAPQE4Za4XUXXnsiD0XGSk@dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com/spacer_new"
+
+Method 2: Using connection parameters
+----------------------------------
+psql -h dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com -U spacer_new_user -d spacer_new
+
+Method 3: Using environment variable
+---------------------------------
+# First set the environment variable
+export DATABASE_URL="postgresql://spacer_new_user:YzVj3MZNm6FAPQE4Za4XUXXnsiD0XGSk@dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com/spacer_new"
+
+# Then connect using the variable
+psql $DATABASE_URL
+
+Method 4: Using .pgpass file (Most Secure)
+----------------------------------------
+# Create .pgpass file in your home directory
+echo "dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com:5432:spacer_new:spacer_new_user:YzVj3MZNm6FAPQE4Za4XUXXnsiD0XGSk" > ~/.pgpass
+
+# Set correct permissions
+chmod 600 ~/.pgpass
+
+# Then connect without needing password
+psql -h dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com -U spacer_new_user -d spacer_new
+
+Method 5: Using service file
+--------------------------
+# Create a service file at ~/.pg_service.conf
+[spacer]
+host=dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com
+dbname=spacer_new
+user=spacer_new_user
+password=YzVj3MZNm6FAPQE4Za4XUXXnsiD0XGSk
+
+# Then connect using service name
+psql service=spacer
+
+Connection Troubleshooting
+-------------------------
+1. If SSL is required:
+   Add 'sslmode=require' to the connection string or use -options="--sslmode=require"
+
+2. If getting timeout errors:
+   - Check if the database is accessible from your network
+   - Try adding ?connect_timeout=30 to the connection URL
+
+3. If getting authentication errors:
+   - Verify credentials are correct
+   - Check if your IP is whitelisted in Render dashboard
+
+Basic Connection Test
+-------------------
+# Test connection without entering psql
+psql -h dpg-d0c359ruibrs73dpdb40-a.oregon-postgres.render.com -U spacer_new_user -d spacer_new -c "SELECT 1;"
+
+# Create database (if needed)
+CREATE DATABASE spacer;
+
+# List all databases
+\l
+
+# Switch to spacer database
+\c spacer
+
+# Show all tables
+\dt
+
+# Show table structure
+\d table_name
+
+
+2. USERS TABLE
+-------------
+# View all users
+SELECT * FROM users;
+
+# View specific user
+SELECT * FROM users WHERE id = <user_id>;
+SELECT * FROM users WHERE email = 'example@email.com';
+
+# View users by role
+SELECT * FROM users WHERE role = 'admin';
+SELECT * FROM users WHERE role = 'owner';
+SELECT * FROM users WHERE role = 'client';
+
+# Delete user
+DELETE FROM users WHERE id = <user_id>;
+
+# Update user role
+UPDATE users SET role = 'admin' WHERE id = <user_id>;
+
+# View user activity
+SELECT u.email, b.* FROM users u 
+JOIN bookings b ON u.id = b.user_id 
+WHERE u.id = <user_id>;
+
+
+3. SPACES TABLE
+--------------
+# View all spaces
+SELECT * FROM spaces;
+
+# View spaces by owner
+SELECT * FROM spaces WHERE owner_id = <owner_id>;
+
+# View available spaces
+SELECT * FROM spaces WHERE is_available = true;
+
+# View spaces by city
+SELECT * FROM spaces WHERE city = 'Nairobi';
+
+# View spaces with price range
+SELECT * FROM spaces WHERE price_per_hour BETWEEN <min_price> AND <max_price>;
+
+# Delete space
+DELETE FROM spaces WHERE id = <space_id>;
+
+# Update space availability
+UPDATE spaces SET is_available = false WHERE id = <space_id>;
+
+# View space bookings
+SELECT s.name, b.* FROM spaces s 
+JOIN bookings b ON s.id = b.space_id 
+WHERE s.id = <space_id>;
+
+
+4. BOOKINGS TABLE
+----------------
+# View all bookings
+SELECT * FROM bookings;
+
+# View bookings by status
+SELECT * FROM bookings WHERE status = 'pending';
+SELECT * FROM bookings WHERE status = 'confirmed';
+SELECT * FROM bookings WHERE status = 'cancelled';
+SELECT * FROM bookings WHERE status = 'completed';
+
+# View bookings by payment status
+SELECT * FROM bookings WHERE payment_status = 'pending';
+SELECT * FROM bookings WHERE payment_status = 'paid';
+SELECT * FROM bookings WHERE payment_status = 'refunded';
+
+# View user's bookings
+SELECT * FROM bookings WHERE user_id = <user_id>;
+
+# View space's bookings
+SELECT * FROM bookings WHERE space_id = <space_id>;
+
+# Cancel booking
+UPDATE bookings SET status = 'cancelled' WHERE id = <booking_id>;
+
+# Delete booking
+DELETE FROM bookings WHERE id = <booking_id>;
+
+# View booking with space and user details
+SELECT b.*, s.name as space_name, u.email as user_email 
+FROM bookings b 
+JOIN spaces s ON b.space_id = s.id 
+JOIN users u ON b.user_id = u.id 
+WHERE b.id = <booking_id>;
+
+
+5. PAYMENTS TABLE
+----------------
+# View all payments
+SELECT * FROM payments;
+
+# View payments by status
+SELECT * FROM payments WHERE status = 'pending';
+SELECT * FROM payments WHERE status = 'completed';
+SELECT * FROM payments WHERE status = 'failed';
+SELECT * FROM payments WHERE status = 'refunded';
+
+# View payments by method
+SELECT * FROM payments WHERE payment_method = 'mpesa';
+SELECT * FROM payments WHERE payment_method = 'card';
+SELECT * FROM payments WHERE payment_method = 'cash';
+
+# View booking payments
+SELECT * FROM payments WHERE booking_id = <booking_id>;
+
+# View payment with booking details
+SELECT p.*, b.total_price, s.name as space_name, u.email as user_email 
+FROM payments p 
+JOIN bookings b ON p.booking_id = b.id 
+JOIN spaces s ON b.space_id = s.id 
+JOIN users u ON b.user_id = u.id 
+WHERE p.id = <payment_id>;
+
+
+6. USEFUL QUERIES
+----------------
+# View all spaces with their current bookings
+SELECT s.name, COUNT(b.id) as total_bookings 
+FROM spaces s 
+LEFT JOIN bookings b ON s.id = b.space_id 
+GROUP BY s.id, s.name;
+
+# View revenue by space
+SELECT s.name, SUM(b.total_price) as total_revenue 
+FROM spaces s 
+JOIN bookings b ON s.id = b.space_id 
+WHERE b.payment_status = 'paid' 
+GROUP BY s.id, s.name;
+
+# View user booking history with space details
+SELECT u.email, s.name as space_name, b.start_time, b.end_time, b.status, b.total_price 
+FROM users u 
+JOIN bookings b ON u.id = b.user_id 
+JOIN spaces s ON b.space_id = s.id 
+WHERE u.id = <user_id>;
+
+# View upcoming bookings
+SELECT s.name as space_name, u.email as user_email, b.start_time, b.end_time 
+FROM bookings b 
+JOIN spaces s ON b.space_id = s.id 
+JOIN users u ON b.user_id = u.id 
+WHERE b.start_time > NOW() AND b.status = 'confirmed' 
+ORDER BY b.start_time;
+
+
+7. DATABASE MAINTENANCE
+---------------------
+# Vacuum the database (cleanup and optimize)
+VACUUM ANALYZE;
+
+# Get table sizes
+SELECT relname as table_name, 
+       pg_size_pretty(pg_total_relation_size(relid)) as total_size 
+FROM pg_catalog.pg_statio_user_tables 
+ORDER BY pg_total_relation_size(relid) DESC;
+
+# Backup database
+# (Run this command in terminal, not in psql)
+pg_dump -U postgres spacer > spacer_backup.sql
+
+# Restore database
+# (Run this command in terminal, not in psql)
+psql -U postgres spacer < spacer_backup.sql
+
+
+8. PSQL SHORTCUTS
+----------------
+\l - List all databases
+\c - Connect to a database
+\dt - List all tables
+\d table_name - Describe table
+\du - List all users
+\timing - Toggle query execution time display
+\q - Quit psql
+\? - Help with psql commands
+\h - Help with SQL commands
+\x - Toggle expanded display
+\e - Open editor with last query
+\s - Show command history
+\i filename - Execute commands from file
+
+Note: Replace <user_id>, <space_id>, <booking_id>, <payment_id>, <owner_id>, <min_price>, <max_price> with actual values when using these commands. 
